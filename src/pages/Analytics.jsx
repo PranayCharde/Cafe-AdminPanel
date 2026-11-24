@@ -89,78 +89,78 @@ export default function Analytics() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <TrendingUp className="w-7 h-7 text-amber-500" />
+          <h1 className="text-2xl font-bold text-[#2e241f] flex items-center gap-2.5">
+            <TrendingUp className="w-7 h-7 text-[#b85c1f]" />
             Performance & Sales Analytics
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#786c65] mt-1">
             Real-time business insights, dining breakdowns, and bestselling dishes
           </p>
         </div>
 
         <button
           onClick={fetchData}
-          className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 transition flex items-center gap-1.5 text-xs font-medium cursor-pointer self-start sm:self-auto"
+          className="px-3.5 py-2 bg-white hover:bg-[#f5efe6] text-[#2e241f] rounded-xl border border-[#ebdccd] shadow-xs transition flex items-center gap-2 text-xs font-semibold cursor-pointer self-start sm:self-auto"
         >
-          <RefreshCw className={`w-4 h-4 text-amber-400 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-4 h-4 text-[#b85c1f] ${loading ? 'animate-spin' : ''}`} />
           <span>Refresh Analytics</span>
         </button>
       </div>
 
       {/* Primary KPI Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+        <div className="bg-white border border-[#ebdccd] rounded-2xl p-5 shadow-card hover:shadow-elevated transition">
+          <div className="flex items-center justify-between text-[#786c65] text-xs font-semibold mb-2">
             <span>Gross Revenue</span>
-            <DollarSign className="w-4 h-4 text-amber-400" />
+            <DollarSign className="w-4 h-4 text-[#b85c1f]" />
           </div>
-          <div className="text-3xl font-extrabold text-white">
-            ${metrics.totalRev.toFixed(2)}
+          <div className="text-3xl font-extrabold text-[#2e241f]">
+            ₹{metrics.totalRev.toFixed(2)}
           </div>
-          <div className="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+          <div className="text-[11px] text-emerald-700 font-medium mt-1 flex items-center gap-1">
             <span>Across {metrics.validOrdersCount} completed orders</span>
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+        <div className="bg-white border border-[#ebdccd] rounded-2xl p-5 shadow-card hover:shadow-elevated transition">
+          <div className="flex items-center justify-between text-[#786c65] text-xs font-semibold mb-2">
             <span>Average Order Value</span>
-            <TrendingUp className="w-4 h-4 text-sky-400" />
+            <TrendingUp className="w-4 h-4 text-[#b85c1f]" />
           </div>
-          <div className="text-3xl font-extrabold text-sky-400">
-            ${metrics.avgOrderValue.toFixed(2)}
+          <div className="text-3xl font-extrabold text-[#b85c1f]">
+            ₹{metrics.avgOrderValue.toFixed(2)}
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">
+          <div className="text-[11px] text-[#786c65] mt-1">
             Per paying customer ticket
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+        <div className="bg-white border border-[#ebdccd] rounded-2xl p-5 shadow-card hover:shadow-elevated transition">
+          <div className="flex items-center justify-between text-[#786c65] text-xs font-semibold mb-2">
             <span>Dine-In QR Ratio</span>
-            <Armchair className="w-4 h-4 text-emerald-400" />
+            <Armchair className="w-4 h-4 text-emerald-700" />
           </div>
-          <div className="text-3xl font-extrabold text-emerald-400">
+          <div className="text-3xl font-extrabold text-emerald-700">
             {metrics.validOrdersCount > 0
               ? Math.round((metrics.dineInCount / metrics.validOrdersCount) * 100)
               : 0}
             %
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">
+          <div className="text-[11px] text-[#786c65] mt-1">
             {metrics.dineInCount} dine-in vs {metrics.deliveryCount} takeaway
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+        <div className="bg-white border border-[#ebdccd] rounded-2xl p-5 shadow-card hover:shadow-elevated transition">
+          <div className="flex items-center justify-between text-[#786c65] text-xs font-semibold mb-2">
             <span>Table Occupancy</span>
-            <Users className="w-4 h-4 text-amber-500" />
+            <Users className="w-4 h-4 text-[#ea8e47]" />
           </div>
-          <div className="text-3xl font-extrabold text-amber-400">
+          <div className="text-3xl font-extrabold text-[#ea8e47]">
             {Math.round(metrics.tableUtilRate)}%
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">
-            {metrics.occupiedTables} of {tables.length} tables currently seated
+          <div className="text-[11px] text-[#786c65] mt-1">
+            {metrics.occupiedTables} of {tables.length} tables seated
           </div>
         </div>
       </div>
@@ -168,17 +168,17 @@ export default function Analytics() {
       {/* Grid: Top Sellers & Order Type Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Selling Dishes */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+        <div className="bg-white border border-[#ebdccd] rounded-2xl p-6 shadow-card">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Award className="w-5 h-5 text-amber-500" />
+            <h2 className="text-base font-bold text-[#2e241f] flex items-center gap-2">
+              <Award className="w-5 h-5 text-[#b85c1f]" />
               Bestselling Menu Items
             </h2>
-            <span className="text-xs text-slate-400">By quantity sold</span>
+            <span className="text-xs text-[#786c65]">By quantity sold</span>
           </div>
 
           {metrics.topItems.length === 0 ? (
-            <div className="py-12 text-center text-slate-500 text-xs">
+            <div className="py-12 text-center text-[#786c65] text-xs">
               No item orders recorded yet to calculate top sellers.
             </div>
           ) : (
@@ -190,19 +190,19 @@ export default function Analytics() {
                 return (
                   <div key={item.name} className="space-y-1.5 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-200 flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-slate-800 text-amber-400 font-bold flex items-center justify-center text-[10px]">
+                      <span className="font-bold text-[#2e241f] flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full bg-[#faf7f2] border border-[#ebdccd] text-[#b85c1f] font-extrabold flex items-center justify-center text-[10px]">
                           #{idx + 1}
                         </span>
                         {item.name}
                       </span>
-                      <span className="text-slate-400 font-mono">
-                        {item.count} sold (${item.revenue.toFixed(2)})
+                      <span className="text-[#786c65] font-mono">
+                        {item.count} sold (₹{item.revenue.toFixed(2)})
                       </span>
                     </div>
-                    <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-2.5 w-full bg-[#faf7f2] border border-[#ebdccd] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-[#b85c1f] to-[#ea8e47] rounded-full transition-all duration-500"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -214,28 +214,28 @@ export default function Analytics() {
         </div>
 
         {/* Order Channel & Dining Split */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+        <div className="bg-white border border-[#ebdccd] rounded-2xl p-6 shadow-card flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-sky-400" />
+              <h2 className="text-base font-bold text-[#2e241f] flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-[#b85c1f]" />
                 Dine-In Table vs Delivery Channel
               </h2>
-              <span className="text-xs text-slate-400">Order Volume</span>
+              <span className="text-xs text-[#786c65]">Order Volume</span>
             </div>
 
             <div className="space-y-4 my-6">
               <div>
-                <div className="flex justify-between text-xs text-slate-300 mb-1 font-medium">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500" />
+                <div className="flex justify-between text-xs text-[#2e241f] mb-1.5 font-semibold">
+                  <span className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-emerald-600" />
                     In-Store Table QR Orders
                   </span>
                   <span>{metrics.dineInCount} orders</span>
                 </div>
-                <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-3 w-full bg-[#faf7f2] border border-[#ebdccd] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    className="h-full bg-emerald-600 rounded-full transition-all"
                     style={{
                       width: `${
                         metrics.validOrdersCount > 0
@@ -248,16 +248,16 @@ export default function Analytics() {
               </div>
 
               <div>
-                <div className="flex justify-between text-xs text-slate-300 mb-1 font-medium">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-blue-500" />
+                <div className="flex justify-between text-xs text-[#2e241f] mb-1.5 font-semibold">
+                  <span className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-[#b85c1f]" />
                     Takeaway & Online Delivery
                   </span>
                   <span>{metrics.deliveryCount} orders</span>
                 </div>
-                <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-3 w-full bg-[#faf7f2] border border-[#ebdccd] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-500 rounded-full transition-all"
+                    className="h-full bg-[#b85c1f] rounded-full transition-all"
                     style={{
                       width: `${
                         metrics.validOrdersCount > 0
@@ -271,8 +271,8 @@ export default function Analytics() {
             </div>
           </div>
 
-          <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1">
-            <div className="font-semibold text-slate-300">Channel Insights:</div>
+          <div className="bg-[#faf7f2] p-4 rounded-2xl border border-[#ebdccd] text-xs text-[#786c65] space-y-1">
+            <div className="font-bold text-[#2e241f]">Channel Insights:</div>
             <p>
               Direct QR-table orders streamline table turnover by letting diners order and re-order without waiting for staff.
             </p>
@@ -282,4 +282,3 @@ export default function Analytics() {
     </div>
   );
 }
-

@@ -35,16 +35,14 @@ export function Header({ title, subtitle, onRefresh, soundEnabled, setSoundEnabl
       <div className="flex items-center gap-2.5">
         {/* Real-time Socket Status */}
         <div
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-            socketConnected
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${socketConnected
               ? "bg-emerald-50 text-emerald-800 border-emerald-200"
               : "bg-amber-50 text-amber-800 border-amber-200"
-          }`}
+            }`}
         >
           <span
-            className={`w-2 h-2 rounded-full ${
-              socketConnected ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
-            }`}
+            className={`w-2 h-2 rounded-full ${socketConnected ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+              }`}
           />
           <span>{socketConnected ? "Live Socket Active" : "Reconnecting..."}</span>
         </div>
@@ -57,11 +55,10 @@ export function Header({ title, subtitle, onRefresh, soundEnabled, setSoundEnabl
               setSoundEnabled(next);
               if (next) playKitchenChime();
             }}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
-              soundEnabled
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${soundEnabled
                 ? "bg-[#faede3] text-[#b85c1f] border-[#f5d9c2] hover:bg-[#f5d9c2]"
                 : "bg-stone-100 text-[#786c65] border-stone-200 hover:bg-stone-200"
-            }`}
+              }`}
             title={soundEnabled ? "Audio chime active" : "Audio chime muted"}
           >
             {soundEnabled ? (
