@@ -2,11 +2,9 @@
 export const LIVE_API_URL = "https://cafe-backend-production-e4bb93a5.up.railway.app/api";
 
 const resolveApiBase = () => {
-  if (import.meta.env.VITE_API_URL) {
+  // Always prefer absolute live backend URL
+  if (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.startsWith("http")) {
     return import.meta.env.VITE_API_URL.replace(/\/+$/, "");
-  }
-  if (import.meta.env.VITE_SOCKET_URL) {
-    return `${import.meta.env.VITE_SOCKET_URL.replace(/\/+$/, "")}/api`;
   }
   return LIVE_API_URL;
 };
@@ -30,11 +28,31 @@ export async function apiRequest(endpoint, options = {}) {
       ...options,
       headers,
     });
+
+    // Fallback: If 405 Method Not Allowed is returned by a static host or misconfigured proxy,
+    // immediately re-route directly to the live Railway backend!
+    if (res.status === 405 && !url.includes("railway.app")) {
+      console.warn("⚠️ Received 405 from host. Re-routing directly to Railway backend...");
+      const directUrl = `${LIVE_API_URL}${endpoint}`;
+      res = await fetch(directUrl, {
+        ...options,
+        headers,
+      });
+    }
   } catch (netErr) {
     console.error("Network communication error:", netErr);
-    const err = new Error("Backend server unreachable. Verify network or server status.");
-    err.isNetworkError = true;
-    throw err;
+    // Direct Railway retry on network error
+    try {
+      const directUrl = `${LIVE_API_URL}${endpoint}`;
+      res = await fetch(directUrl, {
+        ...options,
+        headers,
+      });
+    } catch {
+      const err = new Error("Backend server unreachable. Verify network or server status.");
+      err.isNetworkError = true;
+      throw err;
+    }
   }
 
   const data = await res.json().catch(() => ({}));
@@ -54,7 +72,10 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   if (!res.ok) {
-    const error = new Error(data.message || data.error || `Request failed (${res.status})`);
+    const errorMsg = data.message || data.error || (res.status === 405
+      ? "Method Not Allowed (405). Please hard-refresh browser (Ctrl+F5) to clear cache."
+      : `Request failed (${res.status})`);
+    const error = new Error(errorMsg);
     error.response = { status: res.status, data };
     throw error;
   }
