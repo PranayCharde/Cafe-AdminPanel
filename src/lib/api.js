@@ -1,5 +1,18 @@
 // Secure API client for Cafe-AdminPanel
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+const resolveApiBase = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/+$/, "");
+  }
+  if (import.meta.env.VITE_SOCKET_URL) {
+    return `${import.meta.env.VITE_SOCKET_URL.replace(/\/+$/, "")}/api`;
+  }
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return `${window.location.origin}/api`;
+  }
+  return "http://localhost:5001/api";
+};
+
+export const API_BASE = resolveApiBase();
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("cafe_admin_token");
