@@ -1,15 +1,25 @@
 // Secure API client for Cafe-AdminPanel
+export const LIVE_API_URL = "https://cafe-backend-production-e4bb93a5.up.railway.app/api";
+
 const resolveApiBase = () => {
+  // 1. Explicit env variables override
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL.replace(/\/+$/, "");
   }
   if (import.meta.env.VITE_SOCKET_URL) {
     return `${import.meta.env.VITE_SOCKET_URL.replace(/\/+$/, "")}/api`;
   }
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-    return `${window.location.origin}/api`;
+
+  // 2. In local development environment, default to local port 5001
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ) {
+    return "http://localhost:5001/api";
   }
-  return "http://localhost:5001/api";
+
+  // 3. In live production (e.g. deployed on Vercel), connect to live Railway API
+  return LIVE_API_URL;
 };
 
 export const API_BASE = resolveApiBase();
@@ -42,7 +52,6 @@ export async function apiRequest(endpoint, options = {}) {
 
   // Handle unauthorized or forbidden responses (token expired / revoked)
   if (res.status === 401 || (res.status === 403 && !endpoint.includes("/auth/admin-login"))) {
-    // Only dispatch if token was present and rejected
     if (token) {
       localStorage.removeItem("cafe_admin_token");
       window.dispatchEvent(

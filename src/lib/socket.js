@@ -1,32 +1,36 @@
 import { io } from "socket.io-client";
 
-// Resolve live backend socket URL from environment variable or current host
+// Production Live Backend on Railway
+export const LIVE_BACKEND_URL = "https://cafe-backend-production-e4bb93a5.up.railway.app";
+
+// Resolve live backend socket URL dynamically
 const resolveSocketUrl = () => {
-  // 1. Explicit Socket.IO live URL
+  // 1. Explicit env variables override
   if (import.meta.env.VITE_SOCKET_URL) {
     return import.meta.env.VITE_SOCKET_URL;
   }
-
-  // 2. Derive from live API URL (strip /api suffix if present)
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
   }
 
-  // 3. In browser production environment (e.g. Vercel with custom domain/proxy)
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-    return window.location.origin;
+  // 2. In local development environment, default to local port 5001
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ) {
+    return "http://localhost:5001";
   }
 
-  // 4. Default local development backend
-  return "http://localhost:5001";
+  // 3. In live production (e.g. deployed on Vercel), connect to live Railway backend
+  return LIVE_BACKEND_URL;
 };
 
 export const SOCKET_URL = resolveSocketUrl();
 
 export const socket = io(SOCKET_URL, {
   autoConnect: true,
-  transports: ["websocket", "polling"], // Ensures fast WebSocket with polling fallback
-  reconnectionAttempts: 20,
+  transports: ["websocket", "polling"], // Ensures fast WebSocket connection with polling fallback
+  reconnectionAttempts: 25,
   reconnectionDelay: 1500,
   timeout: 10000,
 });
