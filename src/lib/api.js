@@ -1,5 +1,5 @@
-// API client for Cafe-AdminPanel
-const API_BASE = "http://localhost:5001/api";
+// Secure API client for Cafe-AdminPanel
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("cafe_admin_token");
@@ -12,12 +12,35 @@ export async function apiRequest(endpoint, options = {}) {
 
   const url = endpoint.startsWith("http") ? endpoint : `${API_BASE}${endpoint}`;
 
-  const res = await fetch(url, {
-    ...options,
-    headers,
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      ...options,
+      headers,
+    });
+  } catch (netErr) {
+    console.error("Network communication error:", netErr);
+    const err = new Error("Backend server unreachable. Verify network or server status.");
+    err.isNetworkError = true;
+    throw err;
+  }
 
   const data = await res.json().catch(() => ({}));
+
+  // Handle unauthorized or forbidden responses (token expired / revoked)
+  if (res.status === 401 || (res.status === 403 && !endpoint.includes("/auth/admin-login"))) {
+    // Only dispatch if token was present and rejected
+    if (token) {
+      localStorage.removeItem("cafe_admin_token");
+      window.dispatchEvent(
+        new CustomEvent("admin_session_expired", {
+          detail: {
+            message: data.message || "Your administrator session has expired. Please sign in again.",
+          },
+        })
+      );
+    }
+  }
 
   if (!res.ok) {
     const error = new Error(data.message || data.error || `Request failed (${res.status})`);
@@ -43,6 +66,7 @@ export const api = {
 export const authApi = {
   adminLogin: (credentials) => api.post("/auth/admin-login", credentials),
   getMe: () => api.get("/auth/me"),
+  changePassword: (data) => api.post("/auth/change-password", data),
 };
 
 export const orderApi = {

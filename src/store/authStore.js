@@ -9,24 +9,35 @@ export const useAuthStore = create()(
       token: null,
       isAuthenticated: false,
       loading: false,
+      sessionNotice: null,
+
+      setSessionNotice: (msg) => set({ sessionNotice: msg }),
+      clearSessionNotice: () => set({ sessionNotice: null }),
 
       login: (token, user) => {
+        // Enforce strict administrator role
+        if (!user || user.role !== "admin") {
+          throw new Error("Access restricted: Only authorized staff and administrator accounts can access this console.");
+        }
+
         localStorage.setItem("cafe_admin_token", token);
         set({
           token,
           user,
           isAuthenticated: true,
           loading: false,
+          sessionNotice: null,
         });
       },
 
-      logout: () => {
+      logout: (notice = null) => {
         localStorage.removeItem("cafe_admin_token");
         set({
           token: null,
           user: null,
           isAuthenticated: false,
           loading: false,
+          sessionNotice: notice,
         });
       },
 
@@ -39,27 +50,43 @@ export const useAuthStore = create()(
 
         try {
           const res = await authApi.getMe();
-          if (res.data?.user) {
+          const user = res.data?.user;
+
+          // Strict verification: user must exist and have role === 'admin'
+          if (user && user.role === "admin") {
             set({
-              user: res.data.user,
+              user,
               token,
               isAuthenticated: true,
               loading: false,
             });
           } else {
-            get().logout();
+            console.warn("User does not have admin permissions. Logging out.");
+            get().logout("Access restricted: Administrator credentials required.");
           }
         } catch (err) {
-          console.warn("Auth check failed:", err);
-          get().logout();
+          console.warn("Admin session verification failed:", err);
+          get().logout("Session expired or invalid. Please sign in again.");
         }
       },
     }),
     {
       name: "cafe_admin_session",
-      partialize: (state) => ({ token: state.token, user: state.user, isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );
+
+// Listen for global session expiry events dispatched by API client
+if (typeof window !== "undefined") {
+  window.addEventListener("admin_session_expired", (event) => {
+    const notice = event?.detail?.message || "Your session has expired. Please sign in again.";
+    useAuthStore.getState().logout(notice);
+  });
+}
 
 export default useAuthStore;

@@ -11,7 +11,7 @@ import Inquiries from './pages/Inquiries';
 import Analytics from './pages/Analytics';
 
 export default function App() {
-  const { isAuthenticated, checkAuth, loading } = useAuthStore();
+  const { isAuthenticated, user, checkAuth, loading } = useAuthStore();
 
   useEffect(() => {
     if (typeof checkAuth === 'function') {
@@ -21,21 +21,21 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
-        <div className="w-8 h-8 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mr-3" />
-        Initializing Admin Portal...
+      <div className="min-h-screen bg-[#faf7f2] flex items-center justify-center text-[#786c65] text-sm">
+        <div className="w-8 h-8 border-2 border-[#b85c1f]/30 border-t-[#b85c1f] rounded-full animate-spin mr-3" />
+        Authenticating Admin Console...
       </div>
     );
   }
 
-  // If not authenticated, render Login immediately
-  if (!isAuthenticated) {
+  // Strict route guard: If not authenticated or role is not admin, render Login
+  if (!isAuthenticated || user?.role !== 'admin') {
     return <Login />;
   }
 
   // Authenticated Protected Admin Layout
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex">
+    <div className="min-h-screen bg-[#faf7f2] text-[#2e241f] flex">
       <Sidebar />
 
       <main className="flex-1 min-w-0 flex flex-col min-h-screen overflow-x-hidden">
