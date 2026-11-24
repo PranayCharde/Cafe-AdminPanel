@@ -56,11 +56,22 @@ export default function Orders() {
     if (socket && !socket.connected) {
       socket.connect();
     }
+    // Ensure subscription to admin channel
+    socket.emit('join_admin');
 
     const handleNewOrder = (order) => {
-      console.log('Realtime new order received:', order);
+      console.log('🔔 [Socket.IO] Realtime new order received:', order);
       playKitchenChime();
-      setOrders((prev) => [order, ...prev.filter((o) => o._id !== order._id && o.id !== order.id)]);
+      setOrders((prev) => {
+        const orderIdKey = order.orderId || order._id || order.id;
+        const filtered = prev.filter(
+          (o) =>
+            o._id !== order._id &&
+            o.id !== order.id &&
+            (orderIdKey ? o.orderId !== orderIdKey : true)
+        );
+        return [order, ...filtered];
+      });
     };
 
     const handleStatusUpdate = (updatedOrder) => {

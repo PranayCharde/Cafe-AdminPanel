@@ -2,23 +2,12 @@
 export const LIVE_API_URL = "https://cafe-backend-production-e4bb93a5.up.railway.app/api";
 
 const resolveApiBase = () => {
-  // 1. Explicit env variables override
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL.replace(/\/+$/, "");
   }
   if (import.meta.env.VITE_SOCKET_URL) {
     return `${import.meta.env.VITE_SOCKET_URL.replace(/\/+$/, "")}/api`;
   }
-
-  // 2. In local development environment, default to local port 5001
-  if (
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-  ) {
-    return "http://localhost:5001/api";
-  }
-
-  // 3. In live production (e.g. deployed on Vercel), connect to live Railway API
   return LIVE_API_URL;
 };
 

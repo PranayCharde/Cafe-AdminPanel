@@ -8,6 +8,7 @@ export function Header({ title, subtitle, onRefresh, soundEnabled, setSoundEnabl
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
   useEffect(() => {
+    setSocketConnected(socket.connected);
     const onConnect = () => setSocketConnected(true);
     const onDisconnect = () => setSocketConnected(false);
 
