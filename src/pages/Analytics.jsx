@@ -46,8 +46,8 @@ export default function Analytics() {
     const totalRev = validOrders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
     const avgOrderValue = validOrders.length > 0 ? totalRev / validOrders.length : 0;
 
-    const dineInCount = validOrders.filter((o) => o.orderType === 'dine-in').length;
-    const deliveryCount = validOrders.length - dineInCount;
+    const dineInCount = validOrders.filter((o) => o.orderType === 'dine-in' || !!o.tableNumber).length;
+    const takeawayCount = validOrders.length - dineInCount;
 
     // Item popularity map
     const itemMap = {};
@@ -77,7 +77,7 @@ export default function Analytics() {
       validOrdersCount: validOrders.length,
       avgOrderValue,
       dineInCount,
-      deliveryCount,
+      takeawayCount,
       topItems,
       occupiedTables,
       tableUtilRate
@@ -147,7 +147,7 @@ export default function Analytics() {
             %
           </div>
           <div className="text-[11px] text-[#786c65] mt-1">
-            {metrics.dineInCount} dine-in vs {metrics.deliveryCount} takeaway
+            {metrics.dineInCount} dine-in vs {metrics.takeawayCount} takeaway
           </div>
         </div>
 
@@ -219,7 +219,7 @@ export default function Analytics() {
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-base font-bold text-[#2e241f] flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-[#b85c1f]" />
-                Dine-In Table vs Delivery Channel
+                Dine-In Table vs Takeaway Pickup
               </h2>
               <span className="text-xs text-[#786c65]">Order Volume</span>
             </div>
@@ -251,9 +251,9 @@ export default function Analytics() {
                 <div className="flex justify-between text-xs text-[#2e241f] mb-1.5 font-semibold">
                   <span className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-[#b85c1f]" />
-                    Takeaway & Online Delivery
+                    Takeaway & Counter Pickup
                   </span>
-                  <span>{metrics.deliveryCount} orders</span>
+                  <span>{metrics.takeawayCount} orders</span>
                 </div>
                 <div className="h-3 w-full bg-[#faf7f2] border border-[#ebdccd] rounded-full overflow-hidden">
                   <div
@@ -261,7 +261,7 @@ export default function Analytics() {
                     style={{
                       width: `${
                         metrics.validOrdersCount > 0
-                          ? (metrics.deliveryCount / metrics.validOrdersCount) * 100
+                          ? (metrics.takeawayCount / metrics.validOrdersCount) * 100
                           : 50
                       }%`
                     }}

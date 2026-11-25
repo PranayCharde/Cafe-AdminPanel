@@ -8,17 +8,22 @@ export function createCustomerWhatsAppLink(mobileNumber, message = "") {
 }
 
 export function formatOrderStatusWhatsApp(order) {
+  const isDineIn = order.orderType === "dine-in" || !!order.tableNumber;
   const statusMap = {
     pending: "has been received and confirmed by the kitchen! ✅",
     preparing: "is currently being prepared fresh in the kitchen! 🍳",
-    ready: "is READY to be served at your table! 🔔",
-    completed: "has been served. Thank you for dining with Bean & Brew! ☕",
+    ready: isDineIn
+      ? "is READY to be served at your table! 🔔"
+      : "is READY for pickup at the counter! 🔔",
+    completed: isDineIn
+      ? "has been served. Thank you for dining with Bean & Brew! ☕"
+      : "has been picked up. Enjoy your meal with Bean & Brew! ☕",
     cancelled: "could not be processed and has been cancelled. ❌",
   };
 
   return (
     `Hi *${order.customerName}*,\n\n` +
-    `Your Bean & Brew Order *#${order.id}*${order.tableNumber ? ` (Table #${order.tableNumber})` : " (Delivery)"} ` +
+    `Your Bean & Brew Order *#${order.id}*${order.tableNumber ? ` (Table #${order.tableNumber})` : " (Takeaway - Counter Pickup)"} ` +
     `${statusMap[order.status] || "status is updated."}\n\n` +
     `💰 *Total Amount:* ₹${Number(order.totalAmount).toFixed(2)}\n` +
     `💳 *Payment:* ${order.paymentMode || "UPI"}\n\n` +

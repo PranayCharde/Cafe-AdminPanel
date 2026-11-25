@@ -130,7 +130,10 @@ export default function Orders() {
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
       if (statusFilter !== 'all' && order.status !== statusFilter) return false;
-      if (typeFilter !== 'all' && order.orderType !== typeFilter) return false;
+      if (typeFilter !== 'all') {
+        if (typeFilter === 'dine-in' && order.orderType !== 'dine-in') return false;
+        if (typeFilter === 'takeaway' && order.orderType !== 'takeaway' && order.orderType !== 'delivery') return false;
+      }
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const orderNum = (order.orderNumber || '').toLowerCase();
@@ -168,7 +171,7 @@ export default function Orders() {
       ready,
       completed,
       dineIn,
-      delivery: orders.length - dineIn,
+      takeaway: orders.length - dineIn,
       totalRev
     };
   }, [orders]);
@@ -183,7 +186,7 @@ export default function Orders() {
             Kitchen Order Stream
           </h1>
           <p className="text-xs text-[#786c65] mt-1">
-            Real-time live queue for table orders and deliveries
+            Real-time live queue for table orders and counter takeaway
           </p>
         </div>
 
@@ -234,7 +237,7 @@ export default function Orders() {
             <CheckCircle2 className="w-4 h-4 text-sky-600" />
           </div>
           <div className="text-3xl font-extrabold text-sky-700">{stats.completed}</div>
-          <div className="text-[11px] text-[#786c65] mt-1">Delivered & closed tickets</div>
+          <div className="text-[11px] text-[#786c65] mt-1">Served & completed orders</div>
         </div>
 
         <div className="bg-white border border-[#ebdccd] rounded-2xl p-5 shadow-card">
@@ -276,7 +279,7 @@ export default function Orders() {
             >
               <option value="all">All Dining Types</option>
               <option value="dine-in">Dine-In (Table QR)</option>
-              <option value="delivery">Takeaway / Delivery</option>
+              <option value="takeaway">Takeaway (Counter Pickup)</option>
             </select>
 
             <div className="relative flex-1 md:w-56">
@@ -346,9 +349,9 @@ export default function Orders() {
                               Table {order.tableNumber || '?'}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-800 font-bold border border-blue-200">
-                              <Truck className="w-3 h-3 text-blue-600" />
-                              Takeaway / Delivery
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 font-bold border border-amber-200">
+                              <ShoppingBag className="w-3 h-3 text-amber-600" />
+                              Takeaway (Counter Pickup)
                             </span>
                           )}
                           {custPhone && <span>&bull; {custPhone}</span>}
@@ -487,15 +490,15 @@ export default function Orders() {
                 <div>
                   <span className="text-[#786c65] block font-medium">Dining Mode:</span>
                   <span className="text-[#2e241f] font-bold capitalize">
-                    {selectedOrder.orderType === 'dine-in'
+                    {selectedOrder.orderType === 'dine-in' || selectedOrder.tableNumber
                       ? `Table #${selectedOrder.tableNumber}`
-                      : 'Takeaway / Delivery'}
+                      : 'Takeaway (Counter Pickup)'}
                   </span>
                 </div>
               </div>
-              {selectedOrder.deliveryAddress && (
+              {selectedOrder.deliveryAddress && !selectedOrder.deliveryAddress.startsWith('Table') && (
                 <div className="pt-2 border-t border-[#ebdccd] text-xs">
-                  <span className="text-[#786c65] block font-medium">Delivery Address:</span>
+                  <span className="text-[#786c65] block font-medium">Pickup / Order Note:</span>
                   <span className="text-[#2e241f]">{selectedOrder.deliveryAddress}</span>
                 </div>
               )}
